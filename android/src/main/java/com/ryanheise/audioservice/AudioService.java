@@ -204,7 +204,12 @@ public class AudioService extends MediaBrowserServiceCompat {
         Intent intent = new Intent(this, MediaButtonReceiver.class);
         intent.setAction(Intent.ACTION_MEDIA_BUTTON);
         intent.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode));
-        return PendingIntent.getBroadcast(this, keyCode, intent, 0);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return PendingIntent.getBroadcast(this, keyCode, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            return PendingIntent.getBroadcast(this, keyCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
     }
 
     PendingIntent buildDeletePendingIntent() {
