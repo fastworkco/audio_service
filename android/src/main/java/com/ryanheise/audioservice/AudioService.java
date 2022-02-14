@@ -215,7 +215,11 @@ public class AudioService extends MediaBrowserServiceCompat {
     PendingIntent buildDeletePendingIntent() {
         Intent intent = new Intent(this, MediaButtonReceiver.class);
         intent.setAction(MediaButtonReceiver.ACTION_NOTIFICATION_DELETE);
-        return PendingIntent.getBroadcast(this, 0, intent, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
     }
 
     public static int toKeyCode(long action) {
