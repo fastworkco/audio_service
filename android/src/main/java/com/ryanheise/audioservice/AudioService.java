@@ -462,8 +462,16 @@ public class AudioService extends MediaBrowserServiceCompat {
         super.onCreate();
         instance = this;
         notificationChannelId = getApplication().getPackageName() + ".channel";
-
-        mediaSession = new MediaSessionCompat(this, "media-session");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    0, new Intent(Intent.ACTION_MEDIA_BUTTON),
+                    PendingIntent.FLAG_IMMUTABLE
+            );
+            mediaSession = new MediaSessionCompat(this, "media-session", null, pendingIntent);
+        } else {
+            mediaSession = new MediaSessionCompat(this, "media-session");
+        }
         mediaSession.setMediaButtonReceiver(null); // TODO: Make this configurable
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder()
